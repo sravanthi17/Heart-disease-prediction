@@ -1,9 +1,10 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+from collections import OrderedDict
 
-import sys
-import pdb
+import numpy as np
+from sklearn import tree
 
 def index(request):
     return render(request, './userData.html')
@@ -11,12 +12,70 @@ def index(request):
 
 @csrf_exempt
 def predict(request):
-    print(request.POST)
-    # print(request.POST.get("age"))
-    for key,value in request.POST.iteritems():
-        
-        print(key)
-        print(value)
-    # print >> sys.stderr, request.data
-    # return render(request, './pred.html')
-    return HttpResponse("Hello, world. You're at prediction app.")
+    post_dict = request.POST.dict()
+    del post_dict["csrfmiddlewaretoken"]
+    transformedValues = OrderedDict()
+    for key,value in post_dict.items():
+        transformedValues[key] = getTransformedValueFromKey(key, value)
+    ordered_dict = OrderedDict(sorted(transformedValues.items()))
+    health = predict_health(ordered_dict.values())
+    if(health == '0'):
+        return render(request, './healthy.html')
+    return render(request, './unhealthy.html')
+
+
+def getTransformedValueFromKey(key, value):
+    if(value == "male"):
+        return '1'
+    elif(value == "female"):
+        return '0'
+    elif(value == "Typical type 1"):
+           return '1'
+    elif(value == "Typical type angina"):
+        return '2'
+    elif (value == "Non-angina type"):
+        return '3'
+    elif(value == "Asymptomatic"):
+        return '4'
+    elif(value == ">=120 mg/dL"):
+        return '1'
+    elif(value == "<120 mg/dL"):
+        return '0'
+    elif (value == "Normal" and key == "07restecg"):
+        return '0'
+    elif (value == "ST-T wave abnormal"):
+        return '1'
+    elif(value == "Left ventricular hypertrophy"):
+        return '2'
+    elif (value == "yes"):
+        return '1'
+    elif (value == "no"):
+        return '0'
+    elif (value == "flat"):
+        return '2'
+    elif (value == "Unslopping"):
+        return '1'
+    elif (value == "Downslopping"):
+        return '3'
+    elif (value == "Normal" and key == "13thal"):
+        return '3'
+    elif (value == "Fixed"):
+        return '6'
+    elif (value == "Reversible"):
+        return '7'
+    else:
+        return str(value)
+
+def predict_health(input):
+    data = np.loadtxt('/Users/sravanthi/Downloads/cleveland.data copy.txt', dtype=object)
+    cleanedInputData = []
+    targetValues = []
+    for eachRow in data:
+        cleanedRow =[]
+        for eachIndex in [2,3,8,9,11,15,18,31,37,39,40,43,50]:
+            cleanedRow.append(eachRow[eachIndex])
+        cleanedInputData.append(cleanedRow)
+        targetValues.append(eachRow[57])
+    clf = tree.DecisionTreeClassifier()
+    clf = clf.fit(cleanedInputData, targetValues)
+    return clf.predict([input])[0]
