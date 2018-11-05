@@ -15,9 +15,12 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from . import views
+from prediction import views
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url('/predict-value', views.predict),
     url('', views.index, name='index'),
 ]
+

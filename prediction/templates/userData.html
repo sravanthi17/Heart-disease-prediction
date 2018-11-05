@@ -1,0 +1,83 @@
+{% extends "bootstrap_ui/bootstrap-skeleton.html" %}
+{% load static %}
+{% block body-content %}
+<div class="container">
+    <div class="jumbotron">
+        <div class="py-5 text-center">
+            <img src="{% static 'heart.jpg' %}" alt="My image">
+            <h2>Heart Disease Prediction</h2>
+        <p class="lead">Keep a Healthy Heart..!!!</p>
+      </div>
+        <form class="form-horizontal" action="/prediction/predict-value/" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="age">Age</label>
+                <input name="age" type="number" class="form-control" id="age" placeholder="Enter age">
+            </div>
+            <label class="form-check-label">Gender</label>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="gender" id="male" value="male">
+                <label class="form-check-label" for="male">
+                    Male
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="gender" id="female" value="female">
+                <label class="form-check-label" for="female">
+                    Female
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label for="rbp">Resting blood pressure</label>
+                <input type="number" class="form-control" id="rbp" placeholder="Enter Resting blood pressure">
+            </div>
+            <div class="form-group">
+                <label for="cp">Chest Pain Type</label>
+                <select name="cp" class="form-control" id="cp">
+                    <option>Typical type 1</option>
+                    <option>Typical type angina</option>
+                    <option>Non-angina type</option>
+                    <option>Asymptomatic</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="chol">Serum Cholesterol</label>
+                <input name="chol" type="number" class="form-control" id="chol" placeholder="Enter serum cholesterol">
+            </div>
+            <div class="form-group">
+                <label for="fbs">Fasting blood sugar</label>
+                <select class="form-control" id="fbs" name="fbs">
+                    <option>>=120 mg/dL</option>
+                    <option><=120 mg/dL</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="restecg">Resting electrographic results</label>
+                <select class="form-control" id="restecg" name="restecg">
+                    <option>Normal</option>
+                    <option>ST-T wave abnormal</option>
+                    <option>Left ventricular hypertrophy</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="mhr">Maximum heart rate achieved</label>
+                <input type="number" class="form-control" id="mhr" name="mhr">
+            </div>
+            <div class="form-group">
+                <label for="std">ST depression induced by exercise relative to rest</label>
+                <input type="number" class="form-control" name="std" id="std">
+            </div>
+            <div class="form-group">
+                <label for="exang">Exercise induced angina</label>
+               <select class="form-control" name="exang" id="exang">
+                    <option>yes</option>
+                    <option>no</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Predict</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
