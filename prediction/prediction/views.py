@@ -6,6 +6,11 @@ from collections import OrderedDict
 import numpy as np
 from sklearn import tree
 
+from sklearn.externals.six import StringIO
+from sklearn.tree import export_graphviz
+from IPython.display import Image, display
+import pydotplus
+
 def index(request):
     return render(request, './userData.html')
     # return HttpResponse("Hello, world. You're at prediction app.")
@@ -25,6 +30,14 @@ def predict(request):
 
 
 def getTransformedValueFromKey(key, value):
+    # values = {'male': '1', 'female': '0',
+    #           'Typical type 1': '1',
+    #           'Typical type angina': '2',
+    #           "Non-angina type": "3",
+    #           "Asymptomatic": 4,
+    #           ">=120 mg/dL": "0",
+    #
+    #           }
     if(value == "male"):
         return '1'
     elif(value == "female"):
@@ -78,4 +91,22 @@ def predict_health(input):
         targetValues.append(eachRow[57])
     clf = tree.DecisionTreeClassifier()
     clf = clf.fit(cleanedInputData, targetValues)
+    # uncomment the below line to generateTree
+    # generateTree(clf)
     return clf.predict([input])[0]
+
+def generateTree(clf):
+    dot_data = StringIO()
+    export_graphviz(clf, out_file=dot_data,
+                    filled=True, rounded=True,
+                    special_characters=True)
+
+    graph = pydotplus.graph_from_dot_data(dot_data.getvalue())
+    plt = Image(graph.create_png())
+    display(plt)
+    graph.write_png("tree.png")
+
+
+
+def viewTree(request):
+    return render(request, './viewTree.html')
