@@ -98,6 +98,7 @@ def predict_health(input):
 def generateTree(clf):
     dot_data = StringIO()
     export_graphviz(clf, out_file=dot_data,
+                    class_names=["age", "gender", "restecg", "cp", "chol", "fbs", "std", "exang", "mhr", "slope", "rbp", "thal", "ca"],
                     filled=True, rounded=True,
                     special_characters=True)
 
