@@ -1,12 +1,12 @@
 {% extends "bootstrap_ui/bootstrap-skeleton.html" %}
 {% block body-content %}
+<button class="btn btn-primary" onclick="location.href='../../prediction/'">Home Page</button>
 <div class="container">
         <div class="py-5 text-center">
             {% load static %}
             <h2>Decision Tree</h2>
         </div>
      <img style="height:500px" src="{% static 'images/tree.png' %}" alt="tree">
-
 </div>
 
 {% endblock %}
