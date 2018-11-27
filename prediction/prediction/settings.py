@@ -25,7 +25,7 @@ SECRET_KEY = 'nwyzg!vf0dlx0r%p6wlx@9&($u%041tnk9jw(us@fl_)a9gh1&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["54.202.23.130"]
+ALLOWED_HOSTS = ["54.202.23.130", "127.0.0.1"]
 
 
 # Application definition
@@ -126,5 +126,4 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')

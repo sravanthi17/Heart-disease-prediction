@@ -10,6 +10,7 @@ from sklearn.externals.six import StringIO
 from sklearn.tree import export_graphviz
 from IPython.display import Image, display
 import pydotplus
+from django.contrib.staticfiles.storage import staticfiles_storage
 
 def index(request):
     return render(request, './userData.html')
@@ -80,7 +81,9 @@ def getTransformedValueFromKey(key, value):
         return str(value)
 
 def predict_health(input):
-    data = np.loadtxt('/Users/sravanthi/Downloads/cleveland.data copy.txt', dtype=object)
+    p = staticfiles_storage.path('hungarian.data.txt')
+    data = np.loadtxt(p, dtype=object)
+    print(data)
     cleanedInputData = []
     targetValues = []
     for eachRow in data:
