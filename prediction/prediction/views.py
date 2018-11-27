@@ -11,6 +11,7 @@ from sklearn.tree import export_graphviz
 from IPython.display import Image, display
 import pydotplus
 from django.contrib.staticfiles.storage import staticfiles_storage
+from django.contrib import messages
 
 def index(request):
     return render(request, './userData.html')
@@ -21,6 +22,10 @@ def predict(request):
     post_dict = request.POST.dict()
     del post_dict["csrfmiddlewaretoken"]
     transformedValues = OrderedDict()
+    empty_keys = [k for k, v in post_dict.iteritems() if not v]
+    if(len(empty_keys) >= 1):
+        messages.error(request, 'Please fill all the fields')
+        return render(request, './userData.html')
     for key,value in post_dict.items():
         transformedValues[key] = getTransformedValueFromKey(key, value)
     ordered_dict = OrderedDict(sorted(transformedValues.items()))
@@ -83,7 +88,6 @@ def getTransformedValueFromKey(key, value):
 def predict_health(input):
     p = staticfiles_storage.path('hungarian.data.txt')
     data = np.loadtxt(p, dtype=object)
-    print(data)
     cleanedInputData = []
     targetValues = []
     for eachRow in data:
