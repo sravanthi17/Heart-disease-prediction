@@ -11,7 +11,10 @@ from sklearn.tree import export_graphviz
 from IPython.display import Image, display
 import pydotplus
 from django.contrib.staticfiles.storage import staticfiles_storage
+from sklearn.model_selection import train_test_split
 from django.contrib import messages
+from sklearn.metrics import accuracy_score
+
 
 def index(request):
     return render(request, './userData.html')
@@ -30,9 +33,9 @@ def predict(request):
         transformedValues[key] = getTransformedValueFromKey(key, value)
     ordered_dict = OrderedDict(sorted(transformedValues.items()))
     health = predict_health(ordered_dict.values())
-    if(health == '0'):
-        return render(request, './healthy.html')
-    return render(request, './unhealthy.html')
+    if(health["health"] == '0'):
+        return render(request, './healthy.html', {"score": health["score"]})
+    return render(request, './unhealthy.html', {"score": health["score"]})
 
 
 def getTransformedValueFromKey(key, value):
@@ -96,11 +99,15 @@ def predict_health(input):
             cleanedRow.append(eachRow[eachIndex])
         cleanedInputData.append(cleanedRow)
         targetValues.append(eachRow[57])
+    X_train, X_test, y_train, y_test = train_test_split(cleanedInputData, targetValues, shuffle=False, stratify=None)
+    clf1 = tree.DecisionTreeClassifier()
     clf = tree.DecisionTreeClassifier()
-    clf = clf.fit(cleanedInputData, targetValues)
+    clf = clf.fit(X_train, y_train)
+    y_predict = clf.predict(X_test)
+    clf1 = clf1.fit(cleanedInputData, targetValues)
     # uncomment the below line to generateTree
     # generateTree(clf)
-    return clf.predict([input])[0]
+    return {"health": clf1.predict([input])[0], "score": accuracy_score(y_test, y_predict)*100};
 
 def generateTree(clf):
     dot_data = StringIO()
